@@ -1,0 +1,65 @@
+import csv
+import matplotlib.pyplot as plt
+
+def generate_population_dictionary_from_csv(filename):
+    """
+    Generate population dictionary from csv data
+    Return a dictionary following this structure:
+    {
+      "Africa": {'population': [100, 200, 300], 'years': [1990, 2000, 2010]},
+      "Asia": {'population': [100, 200, 300], 'years': [1990, 2000, 2010]},
+    }
+    """
+    output = {}
+
+    with open(filename, 'r') as csvfile:
+        reader = csv.DictReader(csvfile)
+        for line in reader:
+            continent = line['continent']
+            year = int(line['year'])
+            population = int(line['population'])
+
+            if continent not in output:
+                output[continent] = {'population': [], 'years': []}
+
+            output[continent]['population'].append(population)
+            output[continent]['years'].append(year)
+
+    return output
+
+def generate_population_plots_from_dictionary(population_dictionary):
+    """
+    Generate the population plots from a dictionary
+    One plot per continent
+    """
+    plt.figure(figsize=(10, 6))
+
+    pastel_colors = {
+        'Africa': '#FFB6C1',
+        'Asia': '#ADD8E6',
+        'Europe': '#FFDEAD',
+        'North America': '#98FB98',
+        'South America': '#FFDAB9',
+        'Oceania': '#E6E6FA'
+    }
+
+    for continent in population_dictionary:
+        years = population_dictionary[continent]['years']
+        population = population_dictionary[continent]['population']
+        plt.plot(years, population, label=continent, marker="o", color=pastel_colors.get(continent, '#D3D3D3'))
+
+    plt.title("Internet Population per Continent", fontsize=14)
+    plt.xlabel("Year", fontsize=12)
+    plt.ylabel("Internet Users (in billions)", fontsize=12)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.legend()
+    plt.xticks(fontsize=10)
+    plt.yticks(fontsize=10)
+    plt.show()
+
+filename = 'data.csv'
+
+# Display internet population in a plot
+population_per_continent = generate_population_dictionary_from_csv(filename)
+generate_population_plots_from_dictionary(population_per_continent)
